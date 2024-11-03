@@ -1,1 +1,5 @@
 streamlit
+lightgbm
+pandas
+flask_cors
+flask

@@ -1,4 +1,24 @@
 import streamlit as st
+import pandas as pd
+import lightgbm as lgb
+from flask_cors import CORS
+from flask import Flask, request
+
+def process(dict):
+    print(1)
+    user_df = pd.DataFrame(dict)
+    print(2)
+    num_col = user_df.select_dtypes(exclude = ['object']).columns.to_list()
+    print(3)
+    categ_col = user_df.select_dtypes(include = ['object']).columns.to_list()
+    print(4)
+    user_df[categ_col] = user_df[categ_col].astype('category')
+    print(5)
+    print(user_df)
+    pred = round(load_3.predict(user_df).item())
+    print(6)
+    return str(pred)
+
 
 if not hasattr(st, 'already_started_server'):
     # Hack the fact that Python modules (like st) only load once to
@@ -19,7 +39,14 @@ if not hasattr(st, 'already_started_server'):
 
     @app.route('/foo')
     def serve_foo():
-        return 'This page is served via Flask!'
+        print(request.form)
+        user_dict = {'Agentype': [request.form.get('Agentype')], 'Year': [int(request.form.get('Year'))], 'Month': [int(request.form.get('Month'))],
+                'Murder': [int(request.form.get('Murder'))], 'VicAge': [int(request.form.get('VicAge'))], 'VicSex': [request.form.get('VicSex')],
+                'VicRace':[request.form.get('VicRace')], 'Weapon': [request.form.get('Weapon')],
+                'Relationship': [request.form.get('Relationship')], 'Circumstance':[request.form.get('Circumstance')],
+                'VicCount': [int(request.form.get('VicCount'))], 'Region':[request.form.get('Region')]}
+        res = process(user_dict)
+        return res
 
     app.run(port=8888)
 
